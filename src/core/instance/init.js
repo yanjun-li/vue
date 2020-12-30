@@ -35,7 +35,9 @@ export function initMixin (Vue: Class<Component>) {
       // internal component options needs special treatment.
       initInternalComponent(vm, options)
     } else {
+      // 合并options
       vm.$options = mergeOptions(
+        // 获取 Vue 初始options
         resolveConstructorOptions(vm.constructor),
         options || {},
         vm
@@ -43,18 +45,19 @@ export function initMixin (Vue: Class<Component>) {
     }
     /* istanbul ignore else */
     if (process.env.NODE_ENV !== 'production') {
+      // 设置代理对象，has或者get handler 来对对象的访问进行对应警示
       initProxy(vm)
     } else {
       vm._renderProxy = vm
     }
     // expose real self
     vm._self = vm
-    initLifecycle(vm)
-    initEvents(vm)
-    initRender(vm)
+    initLifecycle(vm)   //设置与生命周期相关的属性
+    initEvents(vm) // 初始化设置事件
+    initRender(vm) // 设置 $createElement, 和响应式对象$attrs，$listeners
     callHook(vm, 'beforeCreate')
     initInjections(vm) // resolve injections before data/props
-    initState(vm)
+    initState(vm)     // 初始化 props -> methods -> data -> computed -> watcher 等属性
     initProvide(vm) // resolve provide after data/props
     callHook(vm, 'created')
 

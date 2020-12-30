@@ -11,6 +11,7 @@ import {
   isPlainObject
 } from 'shared/util'
 
+// 安照名称首个标志符将event 分类
 const normalizeEvent = cached((name: string): {
   name: string,
   once: boolean,

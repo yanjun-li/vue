@@ -86,6 +86,7 @@ if (typeof Promise !== 'undefined' && isNative(Promise)) {
 
 export function nextTick (cb?: Function, ctx?: Object) {
   let _resolve
+  // 将cb或者 promise.resolve 保存至callbacks 待执行队列中
   callbacks.push(() => {
     if (cb) {
       try {
@@ -97,6 +98,7 @@ export function nextTick (cb?: Function, ctx?: Object) {
       _resolve(ctx)
     }
   })
+  // 两个nextTick 短时间内调用，第二个不会调用timerFunc，而只是将回调保存至callbacks，等待第一次timerFunc 执行时一起清空callbacks。
   if (!pending) {
     pending = true
     timerFunc()

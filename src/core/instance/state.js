@@ -259,6 +259,7 @@ function createGetterInvoker(fn) {
   }
 }
 
+// 将methods 对象中的函数对象挂载到vm对象中，ctx 设置为vm，并且将methods 对象中的非函数对象设置为noop
 function initMethods (vm: Component, methods: Object) {
   const props = vm.$options.props
   for (const key in methods) {

@@ -29,6 +29,11 @@ import {
 const strats = config.optionMergeStrategies
 
 /**
+ * 1. el, propsData 优先使用child 数据
+ * 2. 
+ */
+
+/**
  * Options with restrictions
  */
 if (process.env.NODE_ENV !== 'production') {
@@ -50,6 +55,7 @@ function mergeData (to: Object, from: ?Object): Object {
   if (!from) return to
   let key, toVal, fromVal
 
+  //Reflect.ownKeys 可以遍历 Symbol 键
   const keys = hasSymbol
     ? Reflect.ownKeys(from)
     : Object.keys(from)
@@ -75,6 +81,7 @@ function mergeData (to: Object, from: ?Object): Object {
 
 /**
  * Data
+ * 优先使用 childVal，区分是否为 vm实例，vm实例优先使用实例
  */
 export function mergeDataOrFn (
   parentVal: any,
@@ -179,6 +186,8 @@ LIFECYCLE_HOOKS.forEach(hook => {
  * When a vm is present (instance creation), we need to do
  * a three-way merge between constructor options, instance
  * options and parent options.
+ * 
+ * parentVal 在原型链上
  */
 function mergeAssets (
   parentVal: ?Object,
@@ -237,6 +246,7 @@ strats.watch = function (
 
 /**
  * Other object hashes.
+ * props, methods, inject, computed, 使用 extend 方法合并，优先取childVal
  */
 strats.props =
 strats.methods =
@@ -260,6 +270,7 @@ strats.provide = mergeDataOrFn
 
 /**
  * Default strategy.
+ * 优先使用 childVal 值
  */
 const defaultStrat = function (parentVal: any, childVal: any): any {
   return childVal === undefined
@@ -391,13 +402,14 @@ export function mergeOptions (
   vm?: Component
 ): Object {
   if (process.env.NODE_ENV !== 'production') {
+    // 检查 options.component 中名称
     checkComponents(child)
   }
 
   if (typeof child === 'function') {
     child = child.options
   }
-
+  // 统一格式
   normalizeProps(child, vm)
   normalizeInject(child, vm)
   normalizeDirectives(child)
